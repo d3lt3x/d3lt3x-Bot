@@ -18,7 +18,7 @@ public class BotLauncher {
 
     public static void main(String args[]) throws LoginException {
 
-        builder = new JDABuilder("NzIwMzQ3OTY5MjExMDcyNTcy.XvH8fw.hxBpy9DmGXqgfhXgag7HtFO5of4");
+        builder = new JDABuilder("");
         builder.setActivity(Activity.watching("+help - ver.0.1.8"));
         builder.setStatus(OnlineStatus.ONLINE);
 

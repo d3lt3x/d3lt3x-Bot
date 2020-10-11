@@ -18,7 +18,7 @@ public class CreateGameCommand extends BotCommand {
         }
 
         if(!channel.getType().isGuild()){
-            new TicTacToeGame(user, channel);
+            channel.sendMessage("This game doesn't work in private channels yet.").queue();
             return;
         }
 

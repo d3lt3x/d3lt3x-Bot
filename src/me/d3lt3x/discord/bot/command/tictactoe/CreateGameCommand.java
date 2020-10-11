@@ -17,6 +17,11 @@ public class CreateGameCommand extends BotCommand {
             return;
         }
 
+        if(!channel.getType().isGuild()){
+            new TicTacToeGame(user, channel);
+            return;
+        }
+
         if (message.getMentionedMembers().size() == 1) {
 
             new TicTacToeGame(user, message.getMentionedMembers().get(0).getUser(), channel);

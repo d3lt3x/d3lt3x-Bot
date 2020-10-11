@@ -149,6 +149,7 @@ public class TicTacToeGame {
 
         if (rowCount == 1) {
             this.beginner.delete().queue();
+            this.beginner = null;
         }
 
         rowCount++;

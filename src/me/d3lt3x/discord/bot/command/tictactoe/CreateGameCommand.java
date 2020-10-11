@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
-public class TicTacToeCommand extends BotCommand {
+public class CreateGameCommand extends BotCommand {
 
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args) {

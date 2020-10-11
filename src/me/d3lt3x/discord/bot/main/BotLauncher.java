@@ -3,8 +3,8 @@ package me.d3lt3x.discord.bot.main;
 import me.d3lt3x.discord.bot.command.*;
 import me.d3lt3x.discord.bot.command.general.HelpCommand;
 import me.d3lt3x.discord.bot.command.tictactoe.LeaveGameCommand;
-import me.d3lt3x.discord.bot.command.tictactoe.TicTacToeCommand;
-import me.d3lt3x.discord.bot.listener.MessageListener;
+import me.d3lt3x.discord.bot.command.tictactoe.CreateGameCommand;
+import me.d3lt3x.discord.bot.listener.MessageReceiveListener;
 import me.d3lt3x.discord.bot.listener.MessageReactionListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -33,14 +33,14 @@ public class BotLauncher {
 
     private static void addListeners() {
 
-        builder.addEventListeners(new MessageListener());
+        builder.addEventListeners(new MessageReceiveListener());
         builder.addEventListeners(new MessageReactionListener());
     }
 
     private static void registerCommands() {
 
         commandManager = new CommandManager();
-        commandManager.addCommand("ttt", new TicTacToeCommand());
+        commandManager.addCommand("ttt", new CreateGameCommand());
         commandManager.addCommand("lv", new LeaveGameCommand());
         commandManager.addCommand("help", new HelpCommand());
     }

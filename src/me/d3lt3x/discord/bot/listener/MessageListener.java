@@ -1,6 +1,6 @@
-package me.d3lt3x.discord.bot.tictactoe.listener;
+package me.d3lt3x.discord.bot.listener;
 
-import me.d3lt3x.discord.bot.tictactoe.main.BotLauncher;
+import me.d3lt3x.discord.bot.main.BotLauncher;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 

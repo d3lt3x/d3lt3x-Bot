@@ -1,5 +1,6 @@
-package me.d3lt3x.discord.bot.tictactoe.main;
+package me.d3lt3x.discord.bot.game;
 
+import me.d3lt3x.discord.bot.main.BotLauncher;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageReaction;
@@ -10,8 +11,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class TicTacToeGame {
 
-
-    private MessageChannel channel;
     private Message message;
 
     private final static Map<Message, TicTacToeGame> TIC_TAC_TOE_GAMES = new HashMap<>();
@@ -28,19 +27,22 @@ public class TicTacToeGame {
     private Message beginner;
 
     public TicTacToeGame(User user, MessageChannel channel) {
+
         if (isInGameCheck(user, channel)) return;
         players.add(user);
         setupGame(channel);
     }
 
     public TicTacToeGame(User user1, User user2, MessageChannel channel) {
+
         if (isInGameCheck(user1, channel)) return;
         if (isInGameCheck(user2, channel)) return;
-        if (user2.isBot() || user2 == null || user1.equals(user2)) {
+        if (user2.isBot() || user1.equals(user2)) {
             players.add(user1);
             setupGame(channel);
             return;
         }
+
         players.add(user1);
         players.add(user2);
         multiPlayer = true;
@@ -54,7 +56,7 @@ public class TicTacToeGame {
         if (game == null) return false;
 
         if (game.multiPlayer) {
-            for(User current : game.getPlayers()) {
+            for (User current : game.getPlayers()) {
                 if (current.equals(user)) continue;
                 channel.sendMessage(user.getAsMention() + " is already in a game with " + current.getAsMention() + ", you can leave with ``+lv``").queue();
             }
@@ -68,9 +70,7 @@ public class TicTacToeGame {
     public static TicTacToeGame terminateAbandonedGames(User user1) {
         for (TicTacToeGame game : TIC_TAC_TOE_GAMES.values()) {
             if (game.players.contains(user1)) {
-                StringBuilder builder = new StringBuilder(game.message.getContentRaw());
-                builder.append("\n" + user1.getAsMention() + " left the game.");
-                game.message = game.message.editMessage(builder.toString()).complete();
+                game.message = game.message.editMessage(game.message.getContentRaw() + "\n" + user1.getAsMention() + " left the game.").complete();
                 game.stop();
                 return game;
             }
@@ -80,24 +80,20 @@ public class TicTacToeGame {
 
     public void win(String user) {
         stop();
-        StringBuilder builder = new StringBuilder(this.message.getContentRaw());
-        builder.append("\n " + user + " won!");
-        this.message = this.message.editMessage(builder.toString()).complete();
-        return;
+        this.message = this.message.editMessage(this.message.getContentRaw() + "\n " + user + " won!").complete();
+
     }
 
     private void setupGame(MessageChannel channel) {
-
-        this.channel = channel;
 
         int random = ThreadLocalRandom.current().nextInt(0, 2);
 
         if (!multiPlayer && random == 1)
             this.beginner = channel.sendMessage("The bot begins!").complete();
 
-        else{
+        else {
             userInRow = players.get(random);
-            this.beginner = channel.sendMessage(userInRow.getAsMention()+" begins!").complete();
+            this.beginner = channel.sendMessage(userInRow.getAsMention() + " begins!").complete();
         }
 
         this.message = channel.sendMessage("⬛⬛⬛\n⬛⬛⬛\n⬛⬛⬛").complete();
@@ -107,13 +103,12 @@ public class TicTacToeGame {
         for (String reaction : reactions)
             message.addReaction(reaction).queue();
 
-        if(userInRow==null) botSelect();
+        if (userInRow == null) botSelect();
     }
 
 
     public static boolean isInGame(Message message, User user) {
-        if (TIC_TAC_TOE_GAMES.get(message).players.contains(user)) return true;
-        return false;
+        return TIC_TAC_TOE_GAMES.get(message).players.contains(user);
     }
 
     public static boolean isInGame(User user) {
@@ -124,8 +119,7 @@ public class TicTacToeGame {
     }
 
     public static boolean isGame(Message message) {
-        if (TIC_TAC_TOE_GAMES.containsKey(message)) return true;
-        return false;
+        return TIC_TAC_TOE_GAMES.containsKey(message);
     }
 
     public void pick(User user, MessageReaction reaction) {
@@ -143,7 +137,7 @@ public class TicTacToeGame {
         String reactionStr = reaction.getReactionEmote().getEmoji();
         int pos = Arrays.asList(reactions).indexOf(reactionStr);
 
-        if(Arrays.asList(game).get(pos) != null) return;
+        if (Arrays.asList(game).get(pos) != null) return;
 
         Arrays.fill(game, pos, pos + 1, user.getAsMention());
 
@@ -223,7 +217,6 @@ public class TicTacToeGame {
 
         if (rowCount > 8) {
             win("Nobody");
-            return;
         }
 
     }
@@ -241,14 +234,6 @@ public class TicTacToeGame {
         return null;
     }
 
-    public MessageChannel getChannel() {
-        return this.channel;
-    }
-
-    public boolean isMultiPlayer() {
-        return multiPlayer;
-    }
-
     public List<User> getPlayers() {
         return players;
     }
@@ -257,8 +242,7 @@ public class TicTacToeGame {
         pause = true;
         this.message.clearReactions().queue();
         TIC_TAC_TOE_GAMES.remove(this.message);
-        if(this.beginner!=null) this.beginner.delete().queue();
-        return;
+        if (this.beginner != null) this.beginner.delete().queue();
     }
 
 }

@@ -1,15 +1,17 @@
-package me.d3lt3x.discord.bot.tictactoe.command;
+package me.d3lt3x.discord.bot.command.tictactoe;
 
-import me.d3lt3x.discord.bot.tictactoe.main.TicTacToeGame;
-import me.d3lt3x.discord.bot.tictactoe.util.EmbedUtil;
+import me.d3lt3x.discord.bot.command.BotCommand;
+import me.d3lt3x.discord.bot.game.TicTacToeGame;
+import me.d3lt3x.discord.bot.util.EmbedUtil;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
-public class TicTacToeCommand implements BotCommand{
+public class TicTacToeCommand extends BotCommand {
 
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args) {
+
         if (args.length > 1) {
             channel.sendMessage(EmbedUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "``+ttt`` or ``+ttt @User`` to start a game.", false)).queue();
             return;
@@ -25,7 +27,6 @@ public class TicTacToeCommand implements BotCommand{
 
         } else {
             channel.sendMessage(EmbedUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "``+ttt`` or ``+ttt @User`` to start a game.", false)).queue();
-            return;
         }
     }
 

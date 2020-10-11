@@ -1,6 +1,6 @@
 package me.d3lt3x.discord.bot.command;
 
-public abstract class BotCommand implements Command{
+public abstract class BotCommand implements Command {
 
     private boolean enabled = true;
 

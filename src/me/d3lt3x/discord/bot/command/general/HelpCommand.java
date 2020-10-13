@@ -1,12 +1,12 @@
 package me.d3lt3x.discord.bot.command.general;
 
-import me.d3lt3x.discord.bot.command.BotCommand;
+import me.d3lt3x.discord.bot.command.Command;
 import me.d3lt3x.discord.bot.util.EmbedUtil;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
-public class HelpCommand extends BotCommand {
+public class HelpCommand implements Command {
 
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args) {

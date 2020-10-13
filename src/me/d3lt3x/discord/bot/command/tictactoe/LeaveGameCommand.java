@@ -1,13 +1,13 @@
 package me.d3lt3x.discord.bot.command.tictactoe;
 
-import me.d3lt3x.discord.bot.command.BotCommand;
+import me.d3lt3x.discord.bot.command.Command;
 import me.d3lt3x.discord.bot.game.TicTacToeGame;
 import me.d3lt3x.discord.bot.util.EmbedUtil;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
-public class LeaveGameCommand extends BotCommand {
+public class LeaveGameCommand implements Command {
 
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args) {
@@ -17,17 +17,19 @@ public class LeaveGameCommand extends BotCommand {
             return;
         }
 
-        if (!TicTacToeGame.isInGame(user)) channel.sendMessage("No games to leave.").queue();
+        TicTacToeGame game = TicTacToeGame.getGame(user);
 
-        TicTacToeGame game = TicTacToeGame.terminateAbandonedGames(user);
+        if (game == null) {
+            channel.sendMessage("No games to leave.").queue();
+            return;
+        }
+        game.leaveGame(user);
 
-        assert game != null;
-
-        if (game.getPlayers().size() < 2) channel.sendMessage("You left the game against the bot!").queue();
-        else {
+        if (game.isMultiPlayer())
+            channel.sendMessage("You left the game against the bot!").queue();
+        else
             for (User current : game.getPlayers())
                 if (!user.equals(current))
                     channel.sendMessage("You left the game against " + current.getAsMention()).queue();
-        }
     }
 }

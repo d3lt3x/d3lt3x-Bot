@@ -8,8 +8,5 @@ public interface Command {
 
     void onCommand(User user, MessageChannel channel, Message message, String[] args);
 
-    void enable(boolean enable);
-
-    boolean isEnabled();
 
 }

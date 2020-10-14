@@ -22,9 +22,11 @@ public class TicTacToeGame {
 
     private Message message;
     private User player1;
+
     @Nullable
     private User player2;
-    private final String[] board = new String[9];
+
+    private final List<String> board = new ArrayList<>();
     private boolean multiPlayer;
     private User userInRow = null;
     private int rowCount = 0;
@@ -35,26 +37,26 @@ public class TicTacToeGame {
 
         if (isInGameCheckAndSendMessage(user, channel)) return;
 
-        player1 = user;
+        this.player1 = user;
         setupGame(channel);
     }
 
     public TicTacToeGame(User user1, User user2, MessageChannel channel) {
 
-        if (isInGameCheckAndSendMessage(user1, channel)) return;
-        if (isInGameCheckAndSendMessage(user2, channel)) return;
+        if (checkIfUserInAnyGame(user1, channel) || checkIfUserInAnyGame(user2, channel)) return;
+       
+        this.player1 = user1; 
 
         if (!user2.isBot() && !user1.equals(user2)) {
             multiPlayer = true;
-            player2 = user2;
+            this.player2 = user2;
         }
 
-        player1 = user1;
         setupGame(channel);
 
     }
 
-    private boolean isInGameCheckAndSendMessage(User user, MessageChannel channel) {
+    private boolean checkIfUserInAnyGame(User user, MessageChannel channel) {
 
         TicTacToeGame game = getGame(user);
         if (game == null) return false;
@@ -124,7 +126,7 @@ public class TicTacToeGame {
 
         int pos = REACTIONS.indexOf(reactionStr);
 
-        if (board[pos] != null) return;
+        if (board.get(pos) != null) return;
 
         Arrays.fill(board, pos, pos + 1, user.getAsMention());
 

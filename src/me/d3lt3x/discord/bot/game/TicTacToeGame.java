@@ -96,25 +96,23 @@ public class TicTacToeGame {
         int random = ThreadLocalRandom.current().nextInt(2);
 
         if (!this.multiPlayer && random == 1)
-            channel.sendMessage("The bot begins!").queue(beginner -> this.beginner = beginner);
+            this.beginner = channel.sendMessage("The bot begins!").complete();
 
         else {
             this.userInRow = getPlayers().get(random);
-            channel.sendMessage(this.userInRow.getAsMention() + " begins!").queue(beginner -> this.beginner = beginner);
+            this.beginner = channel.sendMessage(this.userInRow.getAsMention() + " begins!").complete();
         }
 
-        channel.sendMessage("⬛⬛⬛\n⬛⬛⬛\n⬛⬛⬛").queue(message -> {
+        this.message = channel.sendMessage("⬛⬛⬛\n⬛⬛⬛\n⬛⬛⬛").complete();
 
-            this.message = message;
+        TIC_TAC_TOE_GAMES.put(this.message, this);
 
-            TIC_TAC_TOE_GAMES.put(this.message, this);
+        for (String reaction : REACTIONS)
+            this.message.addReaction(reaction).queue();
 
-            for (String reaction : REACTIONS)
-                this.message.addReaction(reaction).queue();
+        if (this.userInRow == null) botSelect(channel.getJDA());
 
-            if (this.userInRow == null) botSelect(channel.getJDA());
 
-        });
     }
 
 
@@ -122,7 +120,7 @@ public class TicTacToeGame {
 
         reaction.removeReaction(user).queue();
 
-        if (!this.userInRow.equals(user)) return;
+        if (this.userInRow == null || !this.userInRow.equals(user)) return;
         if (this.pause) return;
 
 
@@ -158,20 +156,26 @@ public class TicTacToeGame {
         }
 
         StringBuilder builder = new StringBuilder(this.message.getContentRaw()).replace(pos, pos + 1, emote);
-        this.message.editMessage(builder).queue(message -> this.message = message);
 
-        getWinner();
+        this.message.editMessage(builder).queue(message -> {
 
-        if (this.multiPlayer) {
+            this.message = message;
 
-            if (this.userInRow.equals(this.player1))
-                this.userInRow = this.player2;
-            else this.userInRow = this.player1;
+            getWinner();
 
-        } else if (this.userInRow == null) {
-            this.userInRow = this.player1;
-        } else botSelect(jda);
+            if (this.multiPlayer) {
 
+                if (this.userInRow.equals(this.player1))
+                    this.userInRow = this.player2;
+
+                else this.userInRow = this.player1;
+
+            } else if (this.userInRow.equals(player1)) {
+                botSelect(jda);
+
+            } else this.userInRow = this.player1;
+
+        });
     }
 
 
@@ -189,8 +193,6 @@ public class TicTacToeGame {
         this.message.clearReactions(REACTIONS.get(random)).queue();
         Arrays.fill(this.board, random, random + 1, jda.getSelfUser().getAsMention());
         set(jda, random, "⭕");
-
-        this.userInRow = this.player1;
 
     }
 

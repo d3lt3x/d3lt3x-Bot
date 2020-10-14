@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.entities.User;
 
 public class LeaveGameCommand implements Command {
 
-    
+
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args) {
 
@@ -26,7 +26,7 @@ public class LeaveGameCommand implements Command {
         }
         game.leaveGame(user);
 
-        if (game.isMultiPlayer())
+        if (!game.isMultiPlayer())
             channel.sendMessage("You left the game against the bot!").queue();
         else
             for (User current : game.getPlayers())

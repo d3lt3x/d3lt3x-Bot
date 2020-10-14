@@ -14,6 +14,7 @@ import javax.security.auth.login.LoginException;
 
 public class BotLauncher {
 
+    
     public static void main(String[] args) throws LoginException {
 
         JDABuilder builder = JDABuilder.createDefault("");

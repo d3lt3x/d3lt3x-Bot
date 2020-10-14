@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.User;
 
 public class CreateGameCommand implements Command {
 
+    
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args) {
 
@@ -17,7 +18,7 @@ public class CreateGameCommand implements Command {
             return;
         }
 
-        if(!channel.getType().isGuild()){
+        if (!channel.getType().isGuild()) {
             channel.sendMessage("This game doesn't work in private channels yet.").queue();
             return;
         }

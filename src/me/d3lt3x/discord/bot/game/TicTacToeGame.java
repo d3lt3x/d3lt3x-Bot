@@ -5,12 +5,9 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TicTacToeGame {
@@ -22,7 +19,6 @@ public class TicTacToeGame {
 
     private Message message;
     private User player1;
-
     @Nullable
     private User player2;
 
@@ -33,28 +29,29 @@ public class TicTacToeGame {
     private boolean pause = false;
     private Message beginner;
 
+
     public TicTacToeGame(User user, MessageChannel channel) {
 
-        if (isInGameCheckAndSendMessage(user, channel)) return;
-
+        if (checkIfUserInAnyGame(user, channel)) return;
         this.player1 = user;
+
         setupGame(channel);
     }
 
-    public TicTacToeGame(User user1, User user2, MessageChannel channel) {
+
+    public TicTacToeGame(User user1, @Nullable User user2, MessageChannel channel) {
 
         if (checkIfUserInAnyGame(user1, channel) || checkIfUserInAnyGame(user2, channel)) return;
-       
-        this.player1 = user1; 
+        this.player1 = user1;
 
-        if (!user2.isBot() && !user1.equals(user2)) {
-            multiPlayer = true;
+        if (user2 != null && !user2.isBot() && !user1.equals(user2)) {
+            this.multiPlayer = true;
             this.player2 = user2;
         }
 
         setupGame(channel);
-
     }
+
 
     private boolean checkIfUserInAnyGame(User user, MessageChannel channel) {
 
@@ -67,8 +64,10 @@ public class TicTacToeGame {
                 channel.sendMessage(user.getAsMention() + " is already in a game with " + current.getAsMention() + ", you can leave with ``+lv``").queue();
             }
         } else {
+
             channel.sendMessage("You are already in a game, you can leave with ``+lv``").queue();
         }
+
         return true;
     }
 
@@ -77,37 +76,39 @@ public class TicTacToeGame {
 
         if (!isInGame(user)) return;
 
-        message = message.editMessage(message.getContentRaw() + "\n" + user.getAsMention() + " left the game.").complete();
         stop();
-
+        this.message.editMessage(this.message.getContentRaw() + "\n" + user.getAsMention() + " left the game.").queue(message -> this.message = message);
     }
+
 
     public void declareWinner(String user) {
-        stop();
-        this.message = this.message.editMessage(this.message.getContentRaw() + "\n " + user + " won!").complete();
 
+        stop();
+        this.message.editMessage(this.message.getContentRaw() + "\n " + user + " won!").queue(message -> this.message = message);
     }
+
 
     private void setupGame(MessageChannel channel) {
 
-        int random = ThreadLocalRandom.current().nextInt(0, 2);
+        int random = ThreadLocalRandom.current().nextInt(2);
 
-        if (!multiPlayer && random == 1)
-            this.beginner = channel.sendMessage("The bot begins!").complete();
+        if (!this.multiPlayer && random == 1)
+            channel.sendMessage("The bot begins!").queue(beginner -> this.beginner = beginner);
 
         else {
-            userInRow = getPlayers().get(random);
-            this.beginner = channel.sendMessage(userInRow.getAsMention() + " begins!").complete();
+            this.userInRow = getPlayers().get(random);
+            channel.sendMessage(this.userInRow.getAsMention() + " begins!").queue(beginner -> this.beginner = beginner);
         }
 
-        this.message = channel.sendMessage("⬛⬛⬛\n⬛⬛⬛\n⬛⬛⬛").complete();
+        channel.sendMessage("⬛⬛⬛\n⬛⬛⬛\n⬛⬛⬛").queue(message -> this.message = message);
 
-        TIC_TAC_TOE_GAMES.put(message, this);
+        TIC_TAC_TOE_GAMES.put(this.message, this);
 
         for (String reaction : REACTIONS)
-            message.addReaction(reaction).queue();
+            this.message.addReaction(reaction).queue();
 
-        if (userInRow == null) botSelect(channel.getJDA());
+        if (this.userInRow == null) botSelect(channel.getJDA());
+
     }
 
 
@@ -115,8 +116,8 @@ public class TicTacToeGame {
 
         reaction.removeReaction(user).queue();
 
-        if (!userInRow.equals(user)) return;
-        if (pause) return;
+        if (!this.userInRow.equals(user)) return;
+        if (this.pause) return;
 
 
         reaction.clearReactions().queue();
@@ -126,22 +127,23 @@ public class TicTacToeGame {
 
         int pos = REACTIONS.indexOf(reactionStr);
 
-        if (board.get(pos) != null) return;
+        if (this.board.get(pos) != null) return;
 
-        board.set(pos, user.getAsMention());
+        this.board.set(pos, user.getAsMention());
 
         set(reaction.getJDA(), pos, USER_EMOTES[getPlayers().indexOf(user)]);
 
     }
 
+
     private void set(JDA jda, int pos, String emote) {
 
-        if (rowCount == 1) {
+        if (this.rowCount == 1) {
             this.beginner.delete().queue();
             this.beginner = null;
         }
 
-        rowCount++;
+        this.rowCount++;
 
         if (pos >= 3) {
             if (pos <= 5)
@@ -150,69 +152,71 @@ public class TicTacToeGame {
         }
 
         StringBuilder builder = new StringBuilder(this.message.getContentRaw()).replace(pos, pos + 1, emote);
-        this.message = this.message.editMessage(builder).complete();
+        this.message.editMessage(builder).queue(message -> this.message = message);
 
         getWinner();
 
-        if (multiPlayer) {
+        if (this.multiPlayer) {
 
-            if (userInRow.equals(player1))
-                userInRow = player2;
-            else userInRow = player1;
+            if (this.userInRow.equals(this.player1))
+                this.userInRow = this.player2;
+            else this.userInRow = this.player1;
 
-        } else if (userInRow == null) {
-            userInRow = player1;
+        } else if (this.userInRow == null) {
+            this.userInRow = this.player1;
         } else botSelect(jda);
 
     }
 
+
     private void botSelect(JDA jda) {
 
-        if (pause) return;
+        if (this.pause) return;
         this.userInRow = null;
 
         int random = ThreadLocalRandom.current().nextInt(9);
 
-        while (board[random] != null) {
+        while (this.board.get(random) != null) {
             random = ThreadLocalRandom.current().nextInt(9);
         }
 
         this.message.clearReactions(REACTIONS.get(random)).queue();
-
-        Arrays.fill(board, random, random + 1, jda.getSelfUser().getAsMention());
-
+        this.board.set(random, jda.getSelfUser().getAsMention());
         set(jda, random, "⭕");
 
-        this.userInRow = player1;
+        this.userInRow = this.player1;
 
     }
 
+
     private void getWinner() {
 
-        if (rowCount < 3) return;
+        if (this.rowCount < 3) return;
 
         String comparator;
 
         for (int[] section : POSSIBILITIES) {
 
-            if (board[section[0]] == null || board[section[1]] == null || board[section[2]] == null) continue;
+            if (this.board.get(section[0]) == null || this.board.get(section[1]) == null || this.board.get(section[2]) == null) continue;
 
-            comparator = board[section[0]];
+            comparator = this.board.get(section[0]);
 
-            if (comparator.equals(board[section[1]]) && comparator.equals(board[section[2]])) {
+            if (comparator.equals(this.board.get(section[1])) && comparator.equals(this.board.get(section[2]))) {
 
                 declareWinner(comparator);
                 return;
             }
         }
 
-        if (rowCount >= board.length) declareWinner("Nobody");
+        if (this.rowCount >= this.board.size()) declareWinner("Nobody");
 
     }
+
 
     public static TicTacToeGame getGame(Message message) {
         return TIC_TAC_TOE_GAMES.get(message);
     }
+
 
     public static TicTacToeGame getGame(User user) {
 
@@ -223,23 +227,27 @@ public class TicTacToeGame {
         return null;
     }
 
+
     public void stop() {
-        pause = true;
+        this.pause = true;
         this.message.clearReactions().queue();
         TIC_TAC_TOE_GAMES.remove(this.message);
         if (this.beginner != null) this.beginner.delete().queue();
     }
 
+
     public List<User> getPlayers() {
-        return Arrays.asList(player1, player2);
+        return Arrays.asList(this.player1, this.player2);
     }
+
 
     public boolean isMultiPlayer() {
-        return multiPlayer;
+        return this.multiPlayer;
     }
 
+
     private boolean isInGame(User user) {
-        return user == player1 || user == player2;
+        return user == this.player1 || user == this.player2;
     }
 
 }

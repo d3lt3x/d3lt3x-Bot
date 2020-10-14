@@ -22,7 +22,7 @@ public class CommandManager {
     }
 
     public void addCommand(String label, Command command) {
-        commands.put(label, command);
+        this.commands.put(label, command);
     }
 
     public void execute(User user, MessageChannel channel, Message message) {
@@ -31,19 +31,20 @@ public class CommandManager {
 
         String rawMessage = message.getContentRaw();
 
-        if (!rawMessage.startsWith(commandPrefix)) return;
+        if (!rawMessage.startsWith(this.commandPrefix)) return;
 
-        String command = rawMessage.replace(commandPrefix, "");
+        String command = rawMessage.replace(this.commandPrefix, "");
         String separator = " ";
         String label = command.split(separator)[0];
         String[] args = (command.contains(separator) ? command.replaceAll(label + " *", "").split(separator) : new String[0]);
 
-        if (commands.containsKey(label))
-            commands.get(label).onCommand(user, channel, message, args);
+        if (this.commands.containsKey(label))
+            this.commands.get(label).onCommand(user, channel, message, args);
         else commandNotFound(channel);
     }
 
     private void commandNotFound(MessageChannel channel) {
         channel.sendMessage(EmbedUtil.messageEmbed("Command not found", 0xFF0042, "**Use:**", "``+help`` for a list of commands.", false)).queue();
     }
+    
 }

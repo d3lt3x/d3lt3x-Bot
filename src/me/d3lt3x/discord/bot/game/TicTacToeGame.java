@@ -128,7 +128,7 @@ public class TicTacToeGame {
 
         if (board.get(pos) != null) return;
 
-        Arrays.fill(board, pos, pos + 1, user.getAsMention());
+        board.set(pos, user.getAsMention());
 
         set(reaction.getJDA(), pos, USER_EMOTES[getPlayers().indexOf(user)]);
 

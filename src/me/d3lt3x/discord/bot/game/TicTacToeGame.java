@@ -138,7 +138,7 @@ public class TicTacToeGame {
 
     private void set(JDA jda, int pos, String emote) {
 
-        if (this.rowCount == 1) {
+        if (this.rowCount == 0) {
             this.beginner.delete().queue();
             this.beginner = null;
         }
@@ -230,7 +230,7 @@ public class TicTacToeGame {
 
     public void stop() {
         this.pause = true;
-        this.message.clearReactions().queue();
+        if (this.message != null) this.message.clearReactions().queue();
         TIC_TAC_TOE_GAMES.remove(this.message);
         if (this.beginner != null) this.beginner.delete().queue();
     }

@@ -14,11 +14,11 @@ import javax.security.auth.login.LoginException;
 
 public class BotLauncher {
 
-    
+
     public static void main(String[] args) throws LoginException {
 
-        JDABuilder builder = JDABuilder.createDefault("");
-        builder.setActivity(Activity.watching("+help - ver.0.1.9"));
+        JDABuilder builder = JDABuilder.createDefault("NzIwMzQ3OTY5MjExMDcyNTcy.XuEqUw.iP9vOTT_H2LeFptawKYTna-A9WU");
+        builder.setActivity(Activity.watching("+help - ver.0.2.1"));
         builder.setStatus(OnlineStatus.ONLINE);
 
         CommandManager commandManager = registerCommands();

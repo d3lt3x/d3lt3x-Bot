@@ -7,7 +7,10 @@ import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TicTacToeGame {
@@ -22,7 +25,7 @@ public class TicTacToeGame {
     @Nullable
     private User player2;
 
-    private final List<String> board = new ArrayList<>();
+    private final String[] board = new String[9];
     private boolean multiPlayer;
     private User userInRow = null;
     private int rowCount = 0;
@@ -100,15 +103,18 @@ public class TicTacToeGame {
             channel.sendMessage(this.userInRow.getAsMention() + " begins!").queue(beginner -> this.beginner = beginner);
         }
 
-        channel.sendMessage("⬛⬛⬛\n⬛⬛⬛\n⬛⬛⬛").queue(message -> this.message = message);
+        channel.sendMessage("⬛⬛⬛\n⬛⬛⬛\n⬛⬛⬛").queue(message -> {
 
-        TIC_TAC_TOE_GAMES.put(this.message, this);
+            this.message = message;
 
-        for (String reaction : REACTIONS)
-            this.message.addReaction(reaction).queue();
+            TIC_TAC_TOE_GAMES.put(this.message, this);
 
-        if (this.userInRow == null) botSelect(channel.getJDA());
+            for (String reaction : REACTIONS)
+                this.message.addReaction(reaction).queue();
 
+            if (this.userInRow == null) botSelect(channel.getJDA());
+
+        });
     }
 
 
@@ -127,9 +133,9 @@ public class TicTacToeGame {
 
         int pos = REACTIONS.indexOf(reactionStr);
 
-        if (this.board.get(pos) != null) return;
+        if (this.board[pos] != null) return;
 
-        this.board.set(pos, user.getAsMention());
+        Arrays.fill(this.board, pos, pos + 1, user.getAsMention());
 
         set(reaction.getJDA(), pos, USER_EMOTES[getPlayers().indexOf(user)]);
 
@@ -176,12 +182,12 @@ public class TicTacToeGame {
 
         int random = ThreadLocalRandom.current().nextInt(9);
 
-        while (this.board.get(random) != null) {
+        while (this.board[random] != null) {
             random = ThreadLocalRandom.current().nextInt(9);
         }
 
         this.message.clearReactions(REACTIONS.get(random)).queue();
-        this.board.set(random, jda.getSelfUser().getAsMention());
+        Arrays.fill(this.board, random, random + 1, jda.getSelfUser().getAsMention());
         set(jda, random, "⭕");
 
         this.userInRow = this.player1;
@@ -197,18 +203,18 @@ public class TicTacToeGame {
 
         for (int[] section : POSSIBILITIES) {
 
-            if (this.board.get(section[0]) == null || this.board.get(section[1]) == null || this.board.get(section[2]) == null) continue;
+            if (this.board[section[0]] == null || this.board[section[1]] == null || this.board[section[2]] == null) continue;
 
-            comparator = this.board.get(section[0]);
+            comparator = this.board[section[0]];
 
-            if (comparator.equals(this.board.get(section[1])) && comparator.equals(this.board.get(section[2]))) {
+            if (comparator.equals(this.board[section[1]]) && comparator.equals(this.board[section[2]])) {
 
                 declareWinner(comparator);
                 return;
             }
         }
 
-        if (this.rowCount >= this.board.size()) declareWinner("Nobody");
+        if (this.rowCount >= this.board.length) declareWinner("Nobody");
 
     }
 

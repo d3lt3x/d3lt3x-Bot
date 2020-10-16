@@ -29,7 +29,7 @@ public class TicTacToeGame {
     private boolean multiPlayer;
     private User userInRow = null;
     private int rowCount = 0;
-    private boolean pause = false;
+    private boolean pause = true;
     private Message beginner;
 
 
@@ -96,23 +96,28 @@ public class TicTacToeGame {
         int random = ThreadLocalRandom.current().nextInt(2);
 
         if (!this.multiPlayer && random == 1)
-            this.beginner = channel.sendMessage("The bot begins!").complete();
+            channel.sendMessage("The bot begins!").queue(message -> this.beginner = message);
 
         else {
             this.userInRow = getPlayers().get(random);
-            this.beginner = channel.sendMessage(this.userInRow.getAsMention() + " begins!").complete();
+            channel.sendMessage(this.userInRow.getAsMention() + " begins!").queue(message -> this.beginner = message);
         }
 
-        this.message = channel.sendMessage("⬛⬛⬛\n⬛⬛⬛\n⬛⬛⬛").complete();
+        channel.sendMessage("⬛⬛⬛\n⬛⬛⬛\n⬛⬛⬛").queue(message -> {
 
-        TIC_TAC_TOE_GAMES.put(this.message, this);
+            this.message = message;
 
-        for (String reaction : REACTIONS)
-            this.message.addReaction(reaction).queue();
+            TIC_TAC_TOE_GAMES.put(this.message, this);
 
-        if (this.userInRow == null) botSelect(channel.getJDA());
+            REACTIONS.forEach(reaction -> this.message.addReaction(reaction).queue(task -> {
 
+                if (!(REACTIONS.indexOf(reaction) == 8)) return;
 
+                this.pause = false;
+                if (this.userInRow == null) botSelect(channel.getJDA());
+
+            }));
+        });
     }
 
 
@@ -170,10 +175,10 @@ public class TicTacToeGame {
 
                 else this.userInRow = this.player1;
 
-            } else if (this.userInRow.equals(player1)) {
-                botSelect(jda);
+            } else if (this.userInRow == null) {
+                this.userInRow = this.player1;
 
-            } else this.userInRow = this.player1;
+            } else botSelect(jda);
 
         });
     }

@@ -260,7 +260,7 @@ public class TicTacToeGame {
 
 
     private boolean isInGame(User user) {
-        return user == this.player1 || user == this.player2;
+        return this.getPlayers().contains(user);
     }
 
 }

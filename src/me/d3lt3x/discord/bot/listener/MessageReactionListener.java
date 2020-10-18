@@ -8,14 +8,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class MessageReactionListener extends ListenerAdapter {
 
-    
+
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
 
         User user = event.getUser();
         assert user != null;
 
-        if (user.isBot()) return;
+        if (user.isBot())
+            return;
 
         event.retrieveMessage().queue(message -> {
             TicTacToeGame game = TicTacToeGame.getGame(message);

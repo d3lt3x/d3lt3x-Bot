@@ -27,11 +27,13 @@ public class CommandManager {
 
     public void execute(User user, MessageChannel channel, Message message) {
 
-        if (user.isBot()) return;
+        if (user.isBot())
+            return;
 
         String rawMessage = message.getContentRaw();
 
-        if (!rawMessage.startsWith(this.commandPrefix)) return;
+        if (!rawMessage.startsWith(this.commandPrefix))
+            return;
 
         String command = rawMessage.replace(this.commandPrefix, "");
         String separator = " ";
@@ -46,5 +48,5 @@ public class CommandManager {
     private void commandNotFound(MessageChannel channel) {
         channel.sendMessage(EmbedUtil.messageEmbed("Command not found", 0xFF0042, "**Use:**", "``+help`` for a list of commands.", false)).queue();
     }
-    
+
 }

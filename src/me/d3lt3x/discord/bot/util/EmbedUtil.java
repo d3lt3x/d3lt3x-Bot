@@ -12,9 +12,8 @@ public class EmbedUtil {
                 .setTitle(title)
                 .setColor(color);
 
-        for (int i = 0; i < field.length; i++) {
+        for (int i = 0; i < field.length; i++)
             embedBuilder.addField(field[i], value[i], inline);
-        }
 
         return embedBuilder.build();
     }

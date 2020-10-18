@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
 public class HelpCommand implements Command {
-
     
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args) {

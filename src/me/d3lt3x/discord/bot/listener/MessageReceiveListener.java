@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class MessageReceiveListener extends ListenerAdapter {
 
-
     private final CommandManager commandManager;
 
     public MessageReceiveListener(CommandManager commandManager) {

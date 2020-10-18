@@ -24,6 +24,7 @@ public class LeaveGameCommand implements Command {
             channel.sendMessage("No games to leave.").queue();
             return;
         }
+        
         game.leaveGame(user);
 
         if (!game.isMultiPlayer())

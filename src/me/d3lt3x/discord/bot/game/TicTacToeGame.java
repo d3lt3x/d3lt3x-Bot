@@ -26,7 +26,7 @@ public class TicTacToeGame {
     private User player2;
 
     private final String[] board = new String[9];
-    private boolean multiPlayer;
+    private boolean multiPlayer = false;
     private User userInRow = null;
     private int rowCount = 0;
     private boolean pause = true;
@@ -68,7 +68,7 @@ public class TicTacToeGame {
             return false;
 
         if (game.multiPlayer) {
-            for (User current : getPlayers()) {
+            for (User current : game.getPlayers()) {
                 if (current.equals(user))
                     continue;
 
@@ -140,7 +140,6 @@ public class TicTacToeGame {
 
         if (this.pause)
             return;
-
 
         reaction.clearReactions().queue();
 

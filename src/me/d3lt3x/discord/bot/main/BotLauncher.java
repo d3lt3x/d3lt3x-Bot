@@ -17,8 +17,8 @@ public class BotLauncher {
 
     public static void main(String[] args) throws LoginException {
 
-        JDABuilder builder = JDABuilder.createDefault("NzIwMzQ3OTY5MjExMDcyNTcy.XuEqUw.aoCY71a8Hyipd7KP1mWaOz31Uj0");
-        builder.setActivity(Activity.watching("+help - ver.0.2.2"));
+        JDABuilder builder = JDABuilder.createDefault("");
+        builder.setActivity(Activity.watching("+help - ver.0.2.3"));
         builder.setStatus(OnlineStatus.ONLINE);
 
         CommandManager commandManager = registerCommands();

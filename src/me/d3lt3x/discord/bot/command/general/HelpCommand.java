@@ -7,11 +7,11 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
 public class HelpCommand implements Command {
-    
+
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args) {
 
-        String[] field = {"Use **+ttt** or **+ttt @User**", "Use **+lv**"};
+        String[] field = {"Use `+ttt` or **+ttt @User**", "Use `+lv`"};
         String[] value = {"to start a TicTacToe game.", "to leave a game."};
         channel.sendMessage(EmbedUtil.messageEmbed("Commands", 0xFFBD00, field, value, false)).queue();
     }

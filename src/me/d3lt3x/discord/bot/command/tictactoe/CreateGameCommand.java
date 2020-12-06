@@ -8,12 +8,12 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
 public class CreateGameCommand implements Command {
-    
+
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args) {
 
         if (args.length > 1) {
-            channel.sendMessage(EmbedUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "``+ttt`` or ``+ttt @User`` to start a game.", false)).queue();
+            channel.sendMessage(EmbedUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "`+ttt` or `+ttt @User` to start a game.", false)).queue();
             return;
         }
 
@@ -31,7 +31,7 @@ public class CreateGameCommand implements Command {
             new TicTacToeGame(user, channel);
 
         } else {
-            channel.sendMessage(EmbedUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "``+ttt`` or ``+ttt @User`` to start a game.", false)).queue();
+            channel.sendMessage(EmbedUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "`+ttt` or `+ttt @User` to start a game.", false)).queue();
         }
     }
 

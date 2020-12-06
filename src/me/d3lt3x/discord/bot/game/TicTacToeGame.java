@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class TicTacToeGame {
+public class TicTacToeGame extends MultiplayerGame {
 
     private final static Map<Message, TicTacToeGame> TIC_TAC_TOE_GAMES = new HashMap<>();
     private final static List<String> REACTIONS = Arrays.asList("1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣");
@@ -278,11 +278,6 @@ public class TicTacToeGame {
 
     public boolean isMultiPlayer() {
         return this.multiPlayer;
-    }
-
-
-    private boolean isInGame(User user) {
-        return this.getPlayers().contains(user);
     }
 
 }

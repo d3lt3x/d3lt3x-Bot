@@ -14,7 +14,7 @@ public class LeaveGameCommand implements Command {
     public void onCommand(User user, MessageChannel channel, Message message, String[] args) {
 
         if (args.length != 0) {
-            channel.sendMessage(EmbedUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "``+lv`` to leave a game.", false)).queue();
+            channel.sendMessage(EmbedUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "`+lv` to leave a game.", false)).queue();
             return;
         }
 
@@ -24,7 +24,7 @@ public class LeaveGameCommand implements Command {
             channel.sendMessage("No games to leave.").queue();
             return;
         }
-        
+
         game.leaveGame(user);
 
         if (!game.isMultiPlayer())

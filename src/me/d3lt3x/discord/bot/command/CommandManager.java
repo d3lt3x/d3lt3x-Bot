@@ -46,7 +46,7 @@ public class CommandManager {
     }
 
     private void commandNotFound(MessageChannel channel) {
-        channel.sendMessage(EmbedUtil.messageEmbed("Command not found", 0xFF0042, "**Use:**", "``+help`` for a list of commands.", false)).queue();
+        channel.sendMessage(EmbedUtil.messageEmbed("Command not found", 0xFF0042, "**Use:**", "`+help` for a list of commands.", false)).queue();
     }
 
 }

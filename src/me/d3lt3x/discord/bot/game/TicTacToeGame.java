@@ -7,10 +7,7 @@ import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TicTacToeGame extends MultiplayerGame {
@@ -21,7 +18,7 @@ public class TicTacToeGame extends MultiplayerGame {
     private final static String[] USER_EMOTES = {"❌", "⭕"};
 
     private Message message;
-    private User player1;
+    private final User player1;
     @Nullable
     private User player2;
 
@@ -32,11 +29,17 @@ public class TicTacToeGame extends MultiplayerGame {
     private boolean pause = true;
     private Message beginner;
 
+    private Timer timer;
+    private Message timerMessage;
+    private int timeLeft = 30;
+
 
     public TicTacToeGame(User user, MessageChannel channel) {
 
+        /*
         if (this.checkIfUserInAnyGame(user, channel))
-            return;
+          return;
+        */
 
         this.player1 = user;
 
@@ -46,8 +49,8 @@ public class TicTacToeGame extends MultiplayerGame {
 
     public TicTacToeGame(User user1, @Nullable User user2, MessageChannel channel) {
 
-        if (this.checkIfUserInAnyGame(user1, channel) || this.checkIfUserInAnyGame(user2, channel))
-            return;
+        //if (this.checkIfUserInAnyGame(user1, channel) || this.checkIfUserInAnyGame(user2, channel))
+        //  return;
 
         this.player1 = user1;
 
@@ -87,18 +90,19 @@ public class TicTacToeGame extends MultiplayerGame {
         if (!this.isInGame(user))
             return;
 
-        this.stop();
-        this.message.editMessage(this.message.getContentRaw() + "\n" + user.getAsMention() + " left the game.").queue(message -> this.message = message);
+        this.stop(this.message.getContentRaw() + "\n" + user.getAsMention() + " left the game.");
     }
 
 
     public void declareWinner(String user) {
-        this.stop();
+        this.stop(this.message.getContentRaw() + "\n " + user + " won!");
         this.message.editMessage(this.message.getContentRaw() + "\n " + user + " won!").queue(message -> this.message = message);
     }
 
 
     private void setupGame(MessageChannel channel) {
+
+        //channel.sendMessage("Time left: 30").queue(timerMessage -> this.timerMessage = timerMessage);
 
         int random = ThreadLocalRandom.current().nextInt(2);
 
@@ -121,19 +125,52 @@ public class TicTacToeGame extends MultiplayerGame {
                 if (!(REACTIONS.indexOf(reaction) == 8))
                     return;
 
+                this.startTimer(new Timer());
+
                 this.pause = false;
 
                 if (this.userInRow == null)
                     this.botSelect(channel.getJDA());
 
+
             }));
         });
+
+
     }
 
+    private void startTimer(Timer timer) {
+        this.timer = timer;
+        timer.scheduleAtFixedRate(new TimerTask() {
+
+            @Override
+            public void run() {
+                timeLeft = timeLeft - 5;
+                //updateTimer(timeLeft);
+                if (timeLeft == 0) {
+                    stop("Time elapsed");
+                }
+            }
+        }, 1, 5000);
+    }
+
+    private void restartTimer() {
+        this.timeLeft = 30;
+    }
+
+    private void stopTimer() {
+        this.timer.cancel();
+        this.timerMessage.delete().queue();
+    }
+
+    private void updateTimer(int time) {
+        this.timerMessage.editMessage(this.timerMessage.getContentRaw().replaceAll("[0-9]+", Integer.toString(time))).queue(timerMessage -> this.timerMessage = timerMessage);
+    }
 
     public void pick(User user, MessageReaction reaction) {
 
         reaction.removeReaction(user).queue();
+
 
         if (this.userInRow == null || !this.userInRow.equals(user))
             return;
@@ -192,7 +229,10 @@ public class TicTacToeGame extends MultiplayerGame {
                 this.userInRow = this.player1;
 
             } else this.botSelect(jda);
+
+            this.restartTimer();
         });
+
 
     }
 
@@ -258,9 +298,11 @@ public class TicTacToeGame extends MultiplayerGame {
     }
 
 
-    public void stop() {
-
+    public void stop(String endMessage) {
+        this.stopTimer();
         this.pause = true;
+
+        this.message.editMessage(endMessage).queue(message -> this.message = message);
 
         if (this.message != null)
             this.message.clearReactions().queue();
@@ -275,6 +317,9 @@ public class TicTacToeGame extends MultiplayerGame {
         return Arrays.asList(this.player1, this.player2);
     }
 
+    public static Map<Message, TicTacToeGame> getGameMap() {
+        return TIC_TAC_TOE_GAMES;
+    }
 
     public boolean isMultiPlayer() {
         return this.multiPlayer;

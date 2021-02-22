@@ -12,7 +12,7 @@ public interface Game {
 
     boolean isMultiPlayer();
 
-    void stop();
+    void stop(String endMessage);
 
     void leaveGame(User user);
 }

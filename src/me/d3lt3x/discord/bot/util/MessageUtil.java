@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 
+import java.util.Map;
+
 public class MessageUtil {
 
 
@@ -16,6 +18,18 @@ public class MessageUtil {
 
         for (int i = 0; i < field.length; i++)
             embedBuilder.addField(field[i], value[i], inline);
+
+        return embedBuilder.build();
+    }
+
+    public static MessageEmbed messageEmbed(String title, int color, Map<String, String> values, boolean inLine) {
+        EmbedBuilder embedBuilder = new EmbedBuilder()
+                .setTitle(title)
+                .setColor(color);
+
+        for (String key : values.keySet()) {
+            embedBuilder.addField(key, values.get(key), inLine);
+        }
 
         return embedBuilder.build();
     }

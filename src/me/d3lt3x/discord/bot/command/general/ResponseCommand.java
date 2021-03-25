@@ -9,13 +9,23 @@ import net.dv8tion.jda.api.entities.User;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResponseCommand implements Command {
+public class ResponseCommand extends Command {
 
     public static final Map<String, String> RESPONSES = new HashMap<>();
+
+    public ResponseCommand(String commandLabel, String descriptionLabel, String descriptionValue) {
+        super(commandLabel, descriptionLabel, descriptionValue);
+    }
+
 
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args, String rawMessage) {
 
+        if (args.length < 1) {
+            getCommandManager().sendSyntax(channel, "rp");
+            return;
+        }
+        
         if (args[0].equalsIgnoreCase("add")) {
             if (rawMessage.contains("=") && args.length > 1) {
                 String[] splitText = rawMessage.replace("add ", "").split("=");
@@ -31,7 +41,7 @@ public class ResponseCommand implements Command {
                     channel.sendMessage("Response removed!").queue();
                 } else channel.sendMessage("Response not found!").queue();
             } else channel.sendMessage(MessageUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "`+rp remove {message}` to remove a message response.", false)).queue();
-        } else channel.sendMessage(MessageUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "`+rp add/remove` to add or remove a message response.", false)).queue();
+        } else getCommandManager().sendSyntax(channel, "rp");
 
     }
 }

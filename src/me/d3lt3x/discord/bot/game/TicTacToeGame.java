@@ -125,7 +125,7 @@ public class TicTacToeGame extends MultiplayerGame {
                 if (!(REACTIONS.indexOf(reaction) == 8))
                     return;
 
-                this.startTimer(new Timer());
+                //this.startTimer(new Timer());
 
                 this.pause = false;
 
@@ -299,7 +299,7 @@ public class TicTacToeGame extends MultiplayerGame {
 
 
     public void stop(String endMessage) {
-        this.stopTimer();
+        //this.stopTimer();
         this.pause = true;
 
         this.message.editMessage(endMessage).queue(message -> this.message = message);

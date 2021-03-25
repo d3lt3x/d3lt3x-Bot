@@ -1,7 +1,6 @@
 package me.d3lt3x.discord.bot.command.general;
 
 import me.d3lt3x.discord.bot.command.Command;
-import me.d3lt3x.discord.bot.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -9,15 +8,20 @@ import net.dv8tion.jda.api.entities.User;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BullyCommand implements Command {
+public class BullyCommand extends Command {
 
     public final static Map<User, String> BULLY_LIST = new HashMap<>();
+
+    public BullyCommand(String commandLabel, String descriptionLabel, String descriptionValue) {
+        super(commandLabel, descriptionLabel, descriptionValue);
+    }
+
 
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args, String argsAsString) {
 
         if (args.length < 2 || message.getMentionedUsers().size() != 1 || !message.getMentionedUsers().toString().contains(args[0])) {
-            channel.sendMessage(MessageUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "`+bully @User {message}` to bully a user.", false)).queue();
+            getCommandManager().sendSyntax(channel, "bully");
             return;
         }
 

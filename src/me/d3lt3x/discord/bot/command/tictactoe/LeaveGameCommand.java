@@ -2,19 +2,22 @@ package me.d3lt3x.discord.bot.command.tictactoe;
 
 import me.d3lt3x.discord.bot.command.Command;
 import me.d3lt3x.discord.bot.game.TicTacToeGame;
-import me.d3lt3x.discord.bot.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
-public class LeaveGameCommand implements Command {
+public class LeaveGameCommand extends Command {
 
+
+    public LeaveGameCommand(String commandLabel, String descriptionLabel, String descriptionValue) {
+        super(commandLabel, descriptionLabel, descriptionValue);
+    }
 
     @Override
     public void onCommand(User user, MessageChannel channel, Message message, String[] args, String argsAsString) {
 
         if (args.length != 0) {
-            channel.sendMessage(MessageUtil.messageEmbed("Syntax Error", 0xFF0042, "**Use:**", "`+lv` to leave a game.", false)).queue();
+            getCommandManager().sendSyntax(channel, "lv");
             return;
         }
 

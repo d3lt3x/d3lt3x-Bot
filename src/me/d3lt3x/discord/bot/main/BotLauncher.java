@@ -18,14 +18,15 @@ import javax.security.auth.login.LoginException;
 
 public class BotLauncher {
 
+    private static CommandManager commandManager;
 
     public static void main(String[] args) throws LoginException {
 
-        JDABuilder builder = JDABuilder.createDefault("*");
-        builder.setActivity(Activity.watching("+help - ver.0.2.3"));
+        JDABuilder builder = JDABuilder.createDefault("");
+        builder.setActivity(Activity.watching("+help - ver.0.3.5"));
         builder.setStatus(OnlineStatus.ONLINE);
 
-        CommandManager commandManager = registerCommands();
+        commandManager = registerCommands();
         builder.addEventListeners(
                 new MessageReceiveListener(commandManager),
                 new MessageReactionListener(),
@@ -41,12 +42,12 @@ public class BotLauncher {
 
     private static CommandManager registerCommands(CommandManager commandManager) {
 
-        commandManager.addCommand("ttt", new CreateGameCommand())
-                .addCommand("lv", new LeaveGameCommand())
-                .addCommand("rp", new ResponseCommand())
-                .addCommand("help", new HelpCommand())
-                .addCommand("bully", new BullyCommand())
-                .addCommand("unbully", new UnBullyCommand());
+        commandManager.addCommand(new CreateGameCommand("ttt", "Use `+ttt` or `+ttt @User`", "to start a TicTacToe game."))
+                .addCommand(new LeaveGameCommand("lv", "Use `+lv`", "to leave a game."))
+                .addCommand(new ResponseCommand("rp", "Use `+rp add/remove`", "to add or remove a response."))
+                .addCommand(new HelpCommand("help", "Use `+help`", "for help."))
+                .addCommand(new BullyCommand("bully", "Use `+bully @User <message>`", "to bully someone."))
+                .addCommand(new UnBullyCommand("unbully", "Use `+unbully @User`", "to stop bullying."));
 
 
         return commandManager;

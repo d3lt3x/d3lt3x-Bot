@@ -3,6 +3,7 @@ package me.d3lt3x.discord.bot.command;
 import me.d3lt3x.discord.bot.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 
 import java.util.HashMap;
@@ -21,11 +22,36 @@ public class CommandManager {
         this.commandPrefix = commandPrefix;
     }
 
-    public CommandManager addCommand(String label, Command command) {
-        this.commands.put(label.toLowerCase(), command);
+    public CommandManager addCommand(Command command) {
+        command.setCommandManager(this);
+        this.commands.put(command.getCommandLabel(), command);
         return this;
     }
 
+    public CommandManager addCommands(Command... commands) {
+        for (Command command : commands)
+            addCommand(command);
+        return this;
+    }
+
+    public MessageEmbed getCommandSyntaxList() {
+
+        Map<String, String> values = new HashMap<>();
+
+        for (Command command : commands.values()) {
+            values.putAll(command.getDescriptionMap());
+        }
+
+        return MessageUtil.messageEmbed("Commands", 0xFFBD00, values, false);
+    }
+
+    public MessageEmbed getCommandSyntax(String label) {
+        return MessageUtil.messageEmbed("Commands", 0xFFBD00, commands.get(label).getDescriptionMap(), false);
+    }
+
+    public void sendSyntax(MessageChannel channel, String label) {
+        channel.sendMessage(getCommandSyntax(label)).queue();
+    }
 
     public void execute(User user, MessageChannel channel, Message message) {
 
@@ -41,7 +67,7 @@ public class CommandManager {
         String separator = " ";
         String label = command.split(separator)[0].toLowerCase();
         String argsAsString = (command.contains(separator) ? command.replaceFirst(label + " *", "") : "");
-        String[] args = argsAsString.split(separator);
+        String[] args = (argsAsString.isEmpty() ? new String[0] : argsAsString.split(separator));
 
         if (this.commands.containsKey(label))
             this.commands.get(label).onCommand(user, channel, message, args, argsAsString);
